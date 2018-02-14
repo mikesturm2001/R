@@ -78,6 +78,9 @@ summary(model2)
 # F-statistic: 77.15 on 3 and 522 DF,  p-value: < 2.2e-16
 
 #run the following linear model: lwage = B0 + B1educ + B2exper + B3tenure + e
+
+# using the log tracks everything as a perent change in wage #
+
 model3 <- lm(lwage~educ+exper+tenure, data=context1)
 summary(model3)
 
@@ -103,20 +106,20 @@ summary(model3)
 
 
 #INTERPRETATIONS
-#a: as the education of a worker increases their wage increases by 0.54470.
+#a: as the education of a worker increases their wage increases by 0.54470 dollars per hour.
 # the .54 suggest there is a strong correlation between the years of education and a worker's salary
-#b: as the education of a worker increases their wage increases by 0.60268
+#b: as the education of a worker increases their wage increases by 0.60268 dollars per hour
 # when other factors are added to the regression the correlation between education and salary increases.
-#c: as the experience of a worker increases their wage increases by 0.02252
+#c: as the experience of a worker increases their wage increases by 0.02252 dollars per hour
 # the .022 shows there isn't a strong correlation between experience and education. Education is more important 
 # than experience for workers seeking a higher salary.
-#d: as the tenure of a worker increases their wage increases by 0.17002
+#d: as the tenure of a worker increases their wage increases by 0.17002 dollars per hour
 # tenure is .17 which suggests there is some correlation between tenure and a higher wage. 
 #e: The intercept means that people with no education and experience will not be making money and 
 #   be a liability instead. hence why there is a  -2.91354 intercept. this makes sense as someone with no education 
 # experience or tenure would not be making money.
-#f: for every year of education a worker has their wage increases by 0.092256
-#g: for every year of experience a worker has their wage increases by 0.004137
-#h: for every year of tenure a worker has their wage increases by 0.022112
+#f: for every year of education a worker has their wage increases by 0.092256 or 9.2% increase
+#g: for every year of experience a worker has their wage increases by 0.004137 or .4% increase 
+#h: for every year of tenure a worker has their wage increases by 0.022112 or 2.2% increase
 
 
