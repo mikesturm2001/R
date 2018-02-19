@@ -2,7 +2,7 @@
 # Title:        ps2.r
 # Author:       Michael Sturm
 # Date:         2018-02-13
-# Description:  Turn-in product for problem set sample
+# Description:  Turn-in product for problem set 2
 ###############################################################
 
 rm(list=ls(all=TRUE))
@@ -37,6 +37,16 @@ summary(model1)
 
 # coefficients(model1) # model coefficients
 
+# A. term GPA changes by .032 for each class attended
+# termGPA increases by .114 for each homework turned in
+# C. (2.88) GPA <- (32*.036) + (2.2*.549) + (28*.032) + (8*.114) - 1.287 
+# D. (3.38) GPA <- (20*.036) + (3.9*.549) + (28*.032) + (8*.114) - 1.287
+# E. PriGPA is more important than the ACT because it has a larger coefficient
+# F. (2.74) GPA <- (25*.036) + (3.0*.549) + (32*.032) + (4*.114) - 1.287 
+# G. (2.68) GPA <- (25*.036) + (3.0*.549) + (16*.032) + (8*.114) - 1.287
+# H. Attendance is slighly higher than homework completion
+# I. Homework and Attendance are directly correlated to the termGPA. PriGPA and ACT are not.
+
 ###############################################################
 
 #Question 2
@@ -60,11 +70,21 @@ summary(context2)
 # 3rd Qu.:11.000   3rd Qu.: 3500   3rd Qu.: 208.0   3rd Qu.: 3500  
 # Max.   :37.000   Max.   :51300   Max.   :2700.0   Max.   :45400  
 
-model2 <- lm(log(salary)~log(mktval)+profits+coeten, data=context2)
+model2 <- lm(log(salary)~log(mktval)+profits+ceoten, data=context2)
 model3 <- lm(log(salary)~log(mktval)+profits+ceoten+log(sales), data=context2)
 
 summary(model2)
 summary(model3)
+
+# A. LN give you the percentage change. 
+# We do not take the Log of the profits because we don't want to measure the percent change in profits to 
+# measure the salary of the CEO. We want to measure by what percentage an increase in the profits increase the salary.
+# B. When the market value of the company increases by 1 percent the CEOs salary increases by .2386x100 percent
+# C. When the market value of the company increases by 1 percent the CEOs salary increases by .1018x100 percent
+# D. omitted variable bias. since we left out the sales in model2 
+# E. the coefficient is still significant for large profits since we did not take the ln of profits
+# Since some profits are 4 digits it becomes signficant
+# F. for every 1 percent increase in sales the CEOs salary increases by .1622x100 percent
 
 ###############################################################
 
@@ -95,6 +115,14 @@ model5 <- lm(log(price)~bdrms+log(lotsize)+log(sqrft)+colonial, data=context3)
 summary(model4)
 summary(model5)
 
+# A. When the lot size increases by 1% the price goes up by 61.446 dollars
+# B. When the lot size increase by 1 percent the house size goes up by .16782x100 percent
+# C. When the house is a colonial the price goes up by 4.134
+# D. Model 4 fits better because homes are usually measured in price. we don't care about percent change of a home.
+# a more expensive home will have less percentage changes than a cheaper priced home
+# E. The price of the home would increase by 41,1318.00 dollars which is greater than 20k so we are adding the room.
+#price <- (1*18.572)+(10*(225.598/100))
+#41.1318
 #########################################################
 
 # Question 4
@@ -129,4 +157,7 @@ model6 <- lm(re78~re75+train+educ+black, data=context4)
 
 summary(model6)
 
+#A. real earning of 75 increase by 1 real earnings of 78 increase by .14697
+#B. if training is 1 earnings for 78 increase by 1.68422 or 1684.22 dollars. it is of moderate significance 
+#C. If the employee is black they are expected to make -2.11277 or 2112.77 dollars less :( 
 
