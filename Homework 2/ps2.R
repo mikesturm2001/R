@@ -28,22 +28,52 @@ summary(context1)
 # 3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:8.000  
 # Max.   :1.0000   Max.   :1.0000   Max.   :8.000  
 
-attendrt <- context1$attend
-hwrt <- context1$hw
+attendrt <- context1$attend/32
+hwrt <- context1$hw/8
 
-model1 <- lm(termGPA~priGPA+ACT+attendrt+hw, data=context1)
+model1 <- lm(termGPA~priGPA+ACT+attendrt+hwrt, data=context1)
 
 summary(model1)
 
+# Call:
+#   lm(formula = termGPA ~ priGPA + ACT + attendrt + hwrt, data = context1)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -1.87210 -0.28100  0.00001  0.30164  1.49711 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) -1.286983   0.164169  -7.839 1.77e-14 ***
+#   priGPA       0.548962   0.042418  12.942  < 2e-16 ***
+#   ACT          0.036099   0.006051   5.966 3.92e-09 ***
+#   attendrt     1.052246   0.155436   6.770 2.81e-11 ***
+#   hwrt         0.913031   0.116932   7.808 2.22e-14 ***
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 0.4788 on 675 degrees of freedom
+# Multiple R-squared:   0.58,	Adjusted R-squared:  0.5775 
+# F-statistic:   233 on 4 and 675 DF,  p-value: < 2.2e-16
+
+
+#coefs = summary(model1)$coefficients
+#intercept <- coefs[1,1]
+#priGPA <- coefs[2,1]
+#ACT <- coefs[3,1]
+#attendrt <- coefs[4,1]
+#hw <- coefs[5,1]
+
 # coefficients(model1) # model coefficients
 
-# A. term GPA changes by .032 for each class attended
-# termGPA increases by .114 for each homework turned in
-# C. (2.88) GPA <- (32*.036) + (2.2*.549) + (28*.032) + (8*.114) - 1.287 
-# D. (3.38) GPA <- (20*.036) + (3.9*.549) + (28*.032) + (8*.114) - 1.287
+# A. term GPA changes by .032 for each class attended or 1.052246 on attendance rate
+# termGPA increases by .114 for each homework turned in or .913031 on hw completion rate
+# For interpertations i used the model without the rates
+# C. (2.91) GPA <- (3.2*0.548962) + (32*0.036099) + ((28/32)*1.052246) + ((8/8)*0.913031) - 1.286983 
+# D. (3.41) GPA <- (3.9*0.548962) + (20*0.036099) + ((28/32)*1.052246) + ((8/8)*0.913031) - 1.286983
 # E. PriGPA is more important than the ACT because it has a larger coefficient
-# F. (2.74) GPA <- (25*.036) + (3.0*.549) + (32*.032) + (4*.114) - 1.287 
-# G. (2.68) GPA <- (25*.036) + (3.0*.549) + (16*.032) + (8*.114) - 1.287
+# F. (2.77) GPA <- (3.0*0.548962) + (25*0.036099) + ((32/32)*1.052246) + ((4/8)*0.913031) - 1.286983
+# G. (2.70) GPA <- (3.0*0.548962) + (25*0.036099) + ((16/32)*1.052246) + ((8/8)*0.913031) - 1.286983
 # H. Attendance is slighly higher than homework completion
 # I. Homework and Attendance are directly correlated to the termGPA. PriGPA and ACT are not.
 
@@ -74,11 +104,55 @@ model2 <- lm(log(salary)~log(mktval)+profits+ceoten, data=context2)
 model3 <- lm(log(salary)~log(mktval)+profits+ceoten+log(sales), data=context2)
 
 summary(model2)
+
+# Call:
+#   lm(formula = log(salary) ~ log(mktval) + profits + ceoten, data = context2)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -2.63382 -0.34660  0.00627  0.35059  1.96220 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 4.7095052  0.3954502  11.909  < 2e-16 ***
+#   log(mktval) 0.2386220  0.0559166   4.267 3.25e-05 ***
+#   profits     0.0000793  0.0001566   0.506   0.6132    
+# ceoten      0.0114646  0.0055816   2.054   0.0415 *  
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 0.5289 on 173 degrees of freedom
+# Multiple R-squared:  0.2514,	Adjusted R-squared:  0.2384 
+# F-statistic: 19.36 on 3 and 173 DF,  p-value: 7.141e-11
+
 summary(model3)
+
+# Call:
+#   lm(formula = log(salary) ~ log(mktval) + profits + ceoten + log(sales), 
+#      data = context2)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -2.48792 -0.29369  0.00827  0.29951  1.85524 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) 4.558e+00  3.803e-01  11.986  < 2e-16 ***
+#   log(mktval) 1.018e-01  6.303e-02   1.614   0.1083    
+# profits     2.905e-05  1.503e-04   0.193   0.8470    
+# ceoten      1.168e-02  5.342e-03   2.187   0.0301 *  
+#   log(sales)  1.622e-01  3.948e-02   4.109 6.14e-05 ***
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 0.5062 on 172 degrees of freedom
+# Multiple R-squared:  0.3183,	Adjusted R-squared:  0.3024 
+# F-statistic: 20.08 on 4 and 172 DF,  p-value: 1.387e-13
 
 # A. LN give you the percentage change. 
 # We do not take the Log of the profits because we don't want to measure the percent change in profits to 
-# measure the salary of the CEO. We want to measure by what percentage an increase in the profits increase the salary.
+# measure the salary of the CEO. We want to measure by how much an x increase in  profits increases the salary percentage.
+# since profits can often go postive and negative and dramatically increase.
 # B. When the market value of the company increases by 1 percent the CEOs salary increases by .2386x100 percent
 # C. When the market value of the company increases by 1 percent the CEOs salary increases by .1018x100 percent
 # D. omitted variable bias. since we left out the sales in model2 
@@ -113,7 +187,52 @@ model4 <- lm(price~bdrms+log(lotsize)+log(sqrft)+colonial, data=context3)
 model5 <- lm(log(price)~bdrms+log(lotsize)+log(sqrft)+colonial, data=context3)
 
 summary(model4)
+
+# Call:
+#   lm(formula = price ~ bdrms + log(lotsize) + log(sqrft) + colonial, 
+#      data = context3)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -109.603  -38.258   -4.325   22.984  220.766 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  -2030.455    210.967  -9.625 3.68e-15 ***
+#   bdrms           18.572      9.308   1.995   0.0493 *  
+#   log(lotsize)    61.446     12.372   4.966 3.60e-06 ***
+#   log(sqrft)     225.508     30.072   7.499 6.41e-11 ***
+#   colonial         4.134     14.509   0.285   0.7764    
+# ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 59.66 on 83 degrees of freedom
+# Multiple R-squared:  0.6781,	Adjusted R-squared:  0.6626 
+# F-statistic: 43.71 on 4 and 83 DF,  p-value: < 2.2e-16
+
 summary(model5)
+
+# Call:
+#   lm(formula = log(price) ~ bdrms + log(lotsize) + log(sqrft) + 
+#        colonial, data = context3)
+# 
+# Residuals:
+#   Min       1Q   Median       3Q      Max 
+# -0.69479 -0.09750 -0.01619  0.09151  0.70228 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  -1.34959    0.65104  -2.073   0.0413 *  
+#   bdrms         0.02683    0.02872   0.934   0.3530    
+# log(lotsize)  0.16782    0.03818   4.395 3.25e-05 ***
+#   log(sqrft)    0.70719    0.09280   7.620 3.69e-11 ***
+#   colonial      0.05380    0.04477   1.202   0.2330    
+# ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 0.1841 on 83 degrees of freedom
+# Multiple R-squared:  0.6491,	Adjusted R-squared:  0.6322 
+# F-statistic: 38.38 on 4 and 83 DF,  p-value: < 2.2e-16
 
 # A. When the lot size increases by 1% the price goes up by 61.446 dollars
 # B. When the lot size increase by 1 percent the house size goes up by .16782x100 percent
@@ -156,6 +275,27 @@ summary(context4)
 model6 <- lm(re78~re75+train+educ+black, data=context4)
 
 summary(model6)
+
+# Call:
+#   lm(formula = re78 ~ re75 + train + educ + black, data = context4)
+# 
+# Residuals:
+#   Min     1Q Median     3Q    Max 
+# -9.120 -4.377 -1.756  3.353 54.058 
+# 
+# Coefficients:
+#   Estimate Std. Error t value Pr(>|t|)   
+# (Intercept)  1.97686    1.89028   1.046   0.2962   
+# re75         0.14697    0.09811   1.498   0.1349   
+# train        1.68422    0.62700   2.686   0.0075 **
+#   educ         0.41026    0.17267   2.376   0.0179 * 
+#   black       -2.11277    0.82941  -2.547   0.0112 * 
+#   ---
+#   Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# 
+# Residual standard error: 6.496 on 440 degrees of freedom
+# Multiple R-squared:  0.04917,	Adjusted R-squared:  0.04053 
+# F-statistic: 5.688 on 4 and 440 DF,  p-value: 0.00018
 
 #A. real earning of 75 increase by 1 real earnings of 78 increase by .14697
 #B. if training is 1 earnings for 78 increase by 1.68422 or 1684.22 dollars. it is of moderate significance 
