@@ -64,18 +64,28 @@ summary(model1)
 #attendrt <- coefs[4,1]
 #hw <- coefs[5,1]
 
+sum(c(1,2.2,32,28/32,8/8)*coef(model1))
+
+(3.2*0.548962)
+(32*0.036099)
+((28/32)*1.052246)
+((8/8)*0.913031)
+
+GPA <- (2.2*0.548962) + (32*0.036099) + ((28/32)*1.052246) + ((8/8)*0.913031) - 1.286983
+GPA2 <- (3.9*0.548962) + (20*0.036099) + ((28/32)*1.052246) + ((8/8)*0.913031) - 1.286983
 # coefficients(model1) # model coefficients
 
 # A. term GPA changes by .032 for each class attended or 1.052246 on attendance rate
 # termGPA increases by .114 for each homework turned in or .913031 on hw completion rate
 # For interpertations i used the model without the rates
-# C. (2.91) GPA <- (3.2*0.548962) + (32*0.036099) + ((28/32)*1.052246) + ((8/8)*0.913031) - 1.286983 
+# C. (2.91) GPA <- (2.2*0.548962) + (32*0.036099) + ((28/32)*1.052246) + ((8/8)*0.913031) - 1.286983 
 # D. (3.41) GPA <- (3.9*0.548962) + (20*0.036099) + ((28/32)*1.052246) + ((8/8)*0.913031) - 1.286983
 # E. PriGPA is more important than the ACT because it has a larger coefficient
 # F. (2.77) GPA <- (3.0*0.548962) + (25*0.036099) + ((32/32)*1.052246) + ((4/8)*0.913031) - 1.286983
 # G. (2.70) GPA <- (3.0*0.548962) + (25*0.036099) + ((16/32)*1.052246) + ((8/8)*0.913031) - 1.286983
 # H. Attendance is slighly higher than homework completion
 # I. Homework and Attendance are directly correlated to the termGPA. PriGPA and ACT are not.
+# the units are the same
 
 ###############################################################
 
@@ -153,12 +163,12 @@ summary(model3)
 # We do not take the Log of the profits because we don't want to measure the percent change in profits to 
 # measure the salary of the CEO. We want to measure by how much an x increase in  profits increases the salary percentage.
 # since profits can often go postive and negative and dramatically increase.
-# B. When the market value of the company increases by 1 percent the CEOs salary increases by .2386x100 percent
-# C. When the market value of the company increases by 1 percent the CEOs salary increases by .1018x100 percent
+# B. When the market value of the company increases by 1 percent the CEOs salary increases by .2386 percent
+# C. When the market value of the company increases by 1 percent the CEOs salary increases by .1018 percent
 # D. omitted variable bias. since we left out the sales in model2 
 # E. the coefficient is still significant for large profits since we did not take the ln of profits
 # Since some profits are 4 digits it becomes signficant
-# F. for every 1 percent increase in sales the CEOs salary increases by .1622x100 percent
+# F. for every 1 percent increase in sales the CEOs salary increases by .1622 percent
 
 ###############################################################
 
@@ -234,11 +244,12 @@ summary(model5)
 # Multiple R-squared:  0.6491,	Adjusted R-squared:  0.6322 
 # F-statistic: 38.38 on 4 and 83 DF,  p-value: < 2.2e-16
 
-# A. When the lot size increases by 1% the price goes up by 61.446 dollars
-# B. When the lot size increase by 1 percent the house size goes up by .16782x100 percent
-# C. When the house is a colonial the price goes up by 4.134
+# A. When the lot size increases by 100% the price goes up by 61.446x1000 dollars
+# B. When the lot size increase by 1 percent the house size goes up by .16782 percent
+# C. When the house is a colonial the price goes up by 4.134x(100)
 # D. Model 4 fits better because homes are usually measured in price. we don't care about percent change of a home.
 # a more expensive home will have less percentage changes than a cheaper priced home
+# NEED TO LOOK AT THE R SQUARED
 # E. The price of the home would increase by 41,1318.00 dollars which is greater than 20k so we are adding the room.
 #price <- (1*18.572)+(10*(225.598/100))
 #41.1318
