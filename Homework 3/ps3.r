@@ -23,17 +23,21 @@ model1 <- lm(price~bdrms+lotsize+sqrft, data=context1)
 
 #OLS Significance Test
 vcov(model1)
+coeftest(model1,vcov.=vcov) 
 
 #White Corrected Significance Test
 vcovHC(model1)
+coeftest(model,vcov.=vcovHC)
 
 model2 <- lm(log(price)~bdrms+log(lotsize)+log(sqrft), data=context1)
 
 #OLS Significance Test
 vcov(model2)
+coeftest(model2,vcov.=vcov) 
 
 #White Corrected Significance Test
 vcovHC(model2)
+coeftest(mode2,vcov.=vcovHC)
 
 ## QUESTION 2 ###########################################
 context2  <- fread('beveridge.csv')
@@ -42,7 +46,8 @@ summary(context2)
 model3 <- lm(urate~vrate, data = context2)
 
 #Compute the OLS significance and NeweyWest significance tests
-vcoc(model3)
+vcov(model3)
+coeftest(model3,vcov.=vcov) 
 vcov=NeweyWest(model3, lag=5)
 coeftest (model3,vcov=NeweyWest(model3, lag=5))
 
@@ -99,4 +104,6 @@ summary(model6)
 
 #Compute the OLS and #HAC Arellano tests for model 6
 vcov(model6)
+coeftest(model6,vcov.=vcov) 
 summary(model6, vcov=vcovHC(model6, method="arellano"))
+
