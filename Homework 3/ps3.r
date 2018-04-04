@@ -25,9 +25,12 @@ model1 <- lm(price~bdrms+lotsize+sqrft, data=context1)
 vcov(model1)
 coeftest(model1,vcov.=vcov) 
 
+#correct
+coeftest(model1)
+
 #White Corrected Significance Test
 vcovHC(model1)
-coeftest(model,vcov.=vcovHC)
+coeftest(model1,vcov.=vcovHC)
 
 model2 <- lm(log(price)~bdrms+log(lotsize)+log(sqrft), data=context1)
 
@@ -35,9 +38,12 @@ model2 <- lm(log(price)~bdrms+log(lotsize)+log(sqrft), data=context1)
 vcov(model2)
 coeftest(model2,vcov.=vcov) 
 
+#correct
+coeftest(model2)
+
 #White Corrected Significance Test
 vcovHC(model2)
-coeftest(mode2,vcov.=vcovHC)
+coeftest(model2,vcov.=vcovHC)
 
 ## QUESTION 2 ###########################################
 context2  <- fread('beveridge.csv')
@@ -83,11 +89,21 @@ coeftest(model4,vcov=NeweyWest(model4, lag=5))
 context3 <- fread('JTRAIN.csv')
 summary(context3)
 
+#declare panel
+context3 <- plm.data(context3, indexes=c('fcode','year'))
+
 #create new variable d88
 context3$d88 <- ifelse(context3$year==1988,1,0)
 
 #create new variable d89
 context3$d89 <- ifelse(context3$year==1989,1,0)
+
+# generate lag(grant)
+#context3$grant_lag <- rep(0,471) #another way to do this
+#for(j in 1:471)
+# if(context3$year[j]!=1987)
+#   context3$grant_lag[j] <- context3$grant[j-1]
+  
 
 #create new variable indicating if the firm had a grant last year
 context3[ , grantLastYear := ifelse(context3$year==1987,0,shift(context3$grant)) ]
@@ -96,6 +112,8 @@ context3[ , grantLastYear := ifelse(context3$year==1987,0,shift(context3$grant))
 model5 <- plm(log(scrap)~d88+d89+grant+grantLastYear,model="pooling",data = context3 )
 
 summary(model5)
+
+coeftest(model5,vcov=vcovHC(model5, method="arellano"))
 
 #run the fixed effects model
 model6 <- plm(log(scrap)~d88+d89+grant+grantLastYear,model="within",data = context3 )
@@ -106,4 +124,5 @@ summary(model6)
 vcov(model6)
 coeftest(model6,vcov.=vcov) 
 summary(model6, vcov=vcovHC(model6, method="arellano"))
+coeftest(model6,vcov=vcovHC(model6, method="arellano"))
 
