@@ -42,8 +42,15 @@ c(AIC(model2),BIC(model2))
 #remove as many variables as you can from model2 to find the key subset of variables that makes model 2
 # have the lowest BIC possible
 
+#remove variables one at a time to find the lowest BIC. 
+
+#takes the derivative when trying to understand (var x var) aka interaction
+#when you add education expierence becomes more valuable. these two
+#factors are compliments. (positive after the derative) negative hurting.
 
 ############################ QUESTION 2 ###########################
+
+#model 25?
 
 context2 <- fread('loanapp.csv')
 
@@ -54,8 +61,14 @@ summary(model3)
 coeftest(model3)
 coeftest(model3,vcov.=vcovHC)
 
+#margins! to give you the magnitude (model 3 from instructor)
+margins(model3)
+
 model4 <- glm(approve~white+hrat+obrat+loanprc+unem+male+married+dep+sch+cosign+chist+pubrec+mortlat1+mortlat2+vr,family=binomial(link="logit"),data = context2)
 summary(model4)
+
+#margins model 4
+margins(model4)
 
 coeftest(model4)
 coeftest(model4,vcov.=vcovHC)
@@ -67,6 +80,8 @@ summary(model5)
 
 coeftest(model5)
 coeftest(model5,vcov.=vcovHC)
+#obrat changes when you are white vs other values.
+#other obligations. race affects lending via other obligations. 
 
 ################################ QUESTION 3 ##################################
 
@@ -77,8 +92,19 @@ context3$agesq <- context3$age^2
 model6 <- glm(cigs~educ+age+agesq+log(income)+restaurn,family=poisson(link="log"),data=context3)
 summary(model6)
 
-coeftest(model6)
+#when interpereting a binomial margin use the margins
+#for posson g(y) = ln(y)
+#interpret via percent change
+
 coeftest(model6,vcov.=vcovHC)
+#take derative for age squared. combined plug in age and it give you values.
+
+#intensive margin
+#how intense for one. each person smokes 6% more.
+#each person stops smoking 5% fewer cigs
+#extensive margin
+#how broad. 6% more of the population starts smoking.
+#5% decrease in the population that smokes.
 
 ############################## QUESTION 4 #####################################
 
@@ -101,18 +127,18 @@ plot(model7,main="Conditional Inference Tree (Heart Disease)")
 model8		<-	evtree(frmla,data=context4)
 # model took MUCH longer; plot of tree is MUCH better
 model8
-plot(fitEv)
+plot(model8)
 
-context5 <- fread('hdisease-new.csv')
+context45 <- fread('hdisease-new.csv')
 
 # create numeric outcome variable (instead of the character var "exang")
-context5$exang		<-	ifelse(context5$exang=="yes",1,0)
+context45$exang		<-	ifelse(context45$exang=="yes",1,0)
 
 hdisease_pred = predict(model8)
 
 ################################ QUESTION 5 #####################################
 
-context6 <- fread('WAGE1.csv')
+context5 <- fread('WAGE1.csv')
 
 ############################
 ## K-means Estimation
@@ -121,26 +147,40 @@ context6 <- fread('WAGE1.csv')
 seed        <-	2	# NOT a good random seed!
 maxClusters	<-	10 #try with 50, then with 15
 
+##need all the madness. will want to plot. this is the elbow test.
+
+
 ## Run the model
 set.seed(seed)
-model9 <- kmeans(context6,centers=3,nstart=10)
+model9 <- kmeans(context5,centers=3,nstart=10)
 model9$centers
-
-
 groups1 <- model9$cluster
 groups1
-context6$cluster <- groups1
+context5$clusters <- groups1
 
-model10 <- lm(wage~educ+exper+tenure,data=context6[cluster==1])
-model11 <- lm(wage~educ+exper+tenure,data=context6[cluster==2])
-model12 <- lm(wage~educ+exper+tenure,data=context6[cluster==3])
+model10 <- lm(log(wage)~educ+exper+tenure,data=subset(context5,clusters==1))
+model11 <- lm(log(wage)~educ+exper+tenure,data=subset(context5,clusters==2))
+model12 <- lm(log(wage)~educ+exper+tenure,data=subset(context5,clusters==3))
+summary(model10)
+summary(model11)
+summary(model12)
 
 ################################## QUESTION 6 ##################################
 
-context7 <- fread('murder.csv')
+context6 <- fread('murder.csv')
 
+#before this
+#make data stationary
+xdata <- context6[1:50,2:52]
+xdata <- context6[2:50,53:103]
+model13 <- prcomp(xdata)
+eig < model13$sdev
+variance <- sum(eig) - cumsum(eig)
+plot(0:10,variance[1:11])
+lines(0:10,variance[1:11])
+screeplot(model13,type="lines") # looks like there are 2 principal components
 
-model13 <- prcomp(context7)
-screeplot(model3,type="lines") # looks like there are 2 principal components
-
-
+factor <- model13$x[.1]
+ts.plot(factor)
+context6[21,1]
+screeplot(model13)
