@@ -36,13 +36,13 @@ context1$educxecper  <- context1$educ*context1$exper
 
 model2 <- lm(log(wage)~abil+educ+abilsq+educsq+expersq+abilxeduc+abilxexper+educxecper, data=context1)
 
+#remove as many variables as you can from model2 to find the key subset of variables that makes model 2
+# have the lowest BIC possible
+model2 <- lm(log(wage)~abil+educ+educxecper, data=context1)
+
 # find the AIC and BIC of Model 2
 c(AIC(model2),BIC(model2))
 
-#remove as many variables as you can from model2 to find the key subset of variables that makes model 2
-# have the lowest BIC possible
-
-#remove variables one at a time to find the lowest BIC. 
 
 #takes the derivative when trying to understand (var x var) aka interaction
 #when you add education expierence becomes more valuable. these two
@@ -58,7 +58,6 @@ model3 <- glm(approve~white,data=context2)
 summary(model3)
 
 #Compute the White heteroskedasticity robust standard errors for model 3
-coeftest(model3)
 coeftest(model3,vcov.=vcovHC)
 
 #margins! to give you the magnitude (model 3 from instructor)
@@ -70,7 +69,6 @@ summary(model4)
 #margins model 4
 margins(model4)
 
-coeftest(model4)
 coeftest(model4,vcov.=vcovHC)
 
 context2$whitexobrat <- context2$white*context2$obrat
@@ -78,7 +76,6 @@ context2$whitexobrat <- context2$white*context2$obrat
 model5 <- glm(approve~white+hrat+obrat+loanprc+unem+male+married+dep+sch+cosign+chist+pubrec+mortlat1+mortlat2+vr+whitexobrat,family=binomial(link="logit"),data = context2)
 summary(model5)
 
-coeftest(model5)
 coeftest(model5,vcov.=vcovHC)
 #obrat changes when you are white vs other values.
 #other obligations. race affects lending via other obligations. 
@@ -116,25 +113,26 @@ context4$exang		<-	ifelse(context4$exang=="yes",1,0)
 # Formula to estimate
 frmla <- hdisease ~ age + cp + trestbps + thalach + exang
 
+# recursive partitioning model using the evtree function
+model7		<-	evtree(frmla,data=context4)
+# model took MUCH longer; plot of tree is MUCH better
+model7
+plot(model7)
 
 # recursive partitioning model using the ctree function
-model7		<-	ctree(frmla, data=context4)
-model7
-# display tree; looks better
-plot(model7,main="Conditional Inference Tree (Heart Disease)")
-
-# recursive partitioning model using the evtree function
-model8		<-	evtree(frmla,data=context4)
-# model took MUCH longer; plot of tree is MUCH better
+model8		<-	ctree(frmla, data=context4)
 model8
-plot(model8)
+# display tree; looks better
+plot(model8,main="Conditional Inference Tree (Heart Disease)")
 
+#Read hddisease-new into context 45
 context45 <- fread('hdisease-new.csv')
 
 # create numeric outcome variable (instead of the character var "exang")
 context45$exang		<-	ifelse(context45$exang=="yes",1,0)
 
-hdisease_pred = predict(model8)
+#predict the disease for the new data
+context45$hdisease_pred <- predict(model8, newdata = context45, type="response")
 
 ################################ QUESTION 5 #####################################
 
@@ -148,7 +146,16 @@ seed        <-	2	# NOT a good random seed!
 maxClusters	<-	10 #try with 50, then with 15
 
 ##need all the madness. will want to plot. this is the elbow test.
-
+## Use within-group variation to choose k
+wss	<- rep(-1,maxClusters)
+for (i in 1:maxClusters) { # i represents the k value
+  set.seed(seed)
+  model <- kmeans(context5,centers=i,nstart=10)
+  wss[i] <- model$tot.withinss
+}
+plot(1:maxClusters,	wss, type="b", 
+     xlab="Number of Clusters",
+     ylab="Aggregate Within Group SS")
 
 ## Run the model
 set.seed(seed)
@@ -172,15 +179,27 @@ context6 <- fread('murder.csv')
 #before this
 #make data stationary
 xdata <- context6[1:50,2:52]
-xdata <- context6[2:50,53:103]
+#xdata <- context6[2:50,53:103]
 model13 <- prcomp(xdata)
-eig < model13$sdev
-variance <- sum(eig) - cumsum(eig)
-plot(0:10,variance[1:11])
-lines(0:10,variance[1:11])
-screeplot(model13,type="lines") # looks like there are 2 principal components
+summary(model13)
+screeplot(model13,type="lines")
 
-factor <- model13$x[.1]
-ts.plot(factor)
-context6[21,1]
-screeplot(model13)
+### Switch to 1 Principal Component (which is what you should do!)
+# get the principal components
+factors <- model13$x[,1]
+head(factors)
+summary(factors)
+
+context6$factor <- factors
+ts.plot(context6$factor,xlab="Date",ylab="Factor")
+
+#eig < model13$sdev
+#variance <- sum(eig) - cumsum(eig)
+#plot(0:10,variance[1:11])
+#lines(0:10,variance[1:11])
+#screeplot(model13,type="lines") # looks like there are 2 principal components
+
+#factor <- model13$x[.1]
+#ts.plot(factor)
+#context6[21,1]
+#screeplot(model13)
