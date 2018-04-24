@@ -15,6 +15,7 @@ library(sandwich)
 library(tree)
 library(party)
 library(evtree)
+library(margins)
 
 ########################### QUESTION 1 ##########################
 
